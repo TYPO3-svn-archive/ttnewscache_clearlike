@@ -1,0 +1,2 @@
+  # cat=basic//10; type=boolean; label= Search if no pid: If view has no pid then searches are conducted in all records of cache_pages. It can be very time consuming so it is disabled by default.
+searchIfNoPid = 0
