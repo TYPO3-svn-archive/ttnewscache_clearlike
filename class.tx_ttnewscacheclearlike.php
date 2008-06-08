@@ -113,43 +113,49 @@ class tx_ttnewscacheClearLike {
 
 			$rowsAffected = 0;
 			if ($typeOfView == 'single') continue;
-			foreach ($params['viewsData'][$typeOfView.'.']['data.'] as $uid => $view) {
-				$uid = substr($uid, 0, -1);
 
-				if(!$searchIfNoPid && !isset($view['pid'])){
-					if ($this->debug) t3lib_div::devLog('[CL] No pid set and "Search If No Pid" is set to 0 so no searching.', $this->extKey);
-				} else {
+			if(is_array($params['viewsData'][$typeOfView.'.']['data.'])){
 
-					if (isset($view['action'])) {
+				foreach ($params['viewsData'][$typeOfView.'.']['data.'] as $uid => $view) {
+					$uid = substr($uid, 0, -1);
 
-						switch ($view['action']) {
+					if(!$searchIfNoPid && !isset($view['pid'])){
+						if ($this->debug) t3lib_div::devLog('[CL] No pid set and "Search If No Pid" is set to 0 so no searching.', $this->extKey);
+					} else {
 
-							case 'record-marker':
-								$where = ' HTML LIKE \'%tt-news-'. $GLOBALS['TYPO3_DB']->escapeStrForLike($typeOfView,'cache_pages') .'-uid-'.$GLOBALS['TYPO3_DB']->escapeStrForLike($uid,'cache_pages') .'-record-'. intval($params['newsData']['id']) .' %\'';
-								break;
+						if (isset($view['action'])) {
 
-							case 'view-marker':
-								$where = ' HTML LIKE \'%tt-news-'. $GLOBALS['TYPO3_DB']->escapeStrForLike($typeOfView,'cache_pages').'-uid-'. $GLOBALS['TYPO3_DB']->escapeStrForLike($uid,'cache_pages') .' %\'';
-								break;
+							switch ($view['action']) {
 
-							default:
-								$where = 0;
-						}
+								case 'record-marker':
+									$where = ' HTML LIKE \'%tt-news-'. $GLOBALS['TYPO3_DB']->escapeStrForLike($typeOfView,'cache_pages') .'-uid-'.$GLOBALS['TYPO3_DB']->escapeStrForLike($uid,'cache_pages') .'-record-'. intval($params['newsData']['id']) .' %\'';
+									break;
 
-						$noPidSet = 0;
-						if( isset($view['pid']) && intval($view['pid']) > 0) {
-							$where .= ' AND page_id = '. $view['pid'];
-						}else {
-							if ($this->debug) t3lib_div::devLog('[CL] Attention '. $typeOfView .' with uid '. $uid.' has no pid set. Searches for marker will be processed in all cache_pages records. This can be time consuming. Set the pid if possible.', $this->extKey,3);
-						}
+								case 'view-marker':
+									$where = ' HTML LIKE \'%tt-news-'. $GLOBALS['TYPO3_DB']->escapeStrForLike($typeOfView,'cache_pages').'-uid-'. $GLOBALS['TYPO3_DB']->escapeStrForLike($uid,'cache_pages') .' %\'';
+									break;
 
-						if ($where) {
-							$res = $GLOBALS['TYPO3_DB']->exec_DELETEquery('cache_pages', $where);
-							$rowsAffected += $GLOBALS['TYPO3_DB']->sql_affected_rows();
-							if ($this->debug) t3lib_div::devLog('[CL] '. $typeOfView .' "$where" built: '.$where, $this->extKey);
+								default:
+									$where = 0;
+							}
+
+							$noPidSet = 0;
+							if( isset($view['pid']) && intval($view['pid']) > 0) {
+								$where .= ' AND page_id = '. $view['pid'];
+							}else {
+								if ($this->debug) t3lib_div::devLog('[CL] Attention '. $typeOfView .' with uid '. $uid.' has no pid set. Searches for marker will be processed in all cache_pages records. This can be time consuming. Set the pid if possible.', $this->extKey,3);
+							}
+
+							if ($where) {
+								$res = $GLOBALS['TYPO3_DB']->exec_DELETEquery('cache_pages', $where);
+								$rowsAffected += $GLOBALS['TYPO3_DB']->sql_affected_rows();
+								if ($this->debug) t3lib_div::devLog('[CL] '. $typeOfView .' "$where" built: '.$where, $this->extKey);
+							}
 						}
 					}
 				}
+			} else {
+				if ($this->debug) t3lib_div::devLog('[CL] No views defined for '.$typeOfView.'.', $this->extKey, 1);
 			}
 			if ($this->debug) t3lib_div::devLog('[CL] Cache clearing in '. $typeOfView .'. Rows affected: '.$rowsAffected, $this->extKey);
 		}
