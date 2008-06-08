@@ -67,11 +67,12 @@ class tx_ttnewscacheClearLike {
 		$confArr = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['ttnewscache_clearlike']);
 		if (isset($confArr['searchIfNoPid'])) $searchIfNoPid = $confArr['searchIfNoPid'];
 
-
 		$this->debug = $thisRef->debug;
 
-		$startTime = $thisRef->TT->mtime();
-		if ($this->debug) t3lib_div::devLog('[CL] Clearlike /hook/ [START]', $this->extKey);
+		if ($this->debug) {
+			$startTime = $thisRef->TT->mtime();
+			t3lib_div::devLog('[CL] Clearlike /hook/ [START]', $this->extKey);
+		}
 
 		//SINGLE
 		$rowsAffected = 0;
@@ -152,8 +153,10 @@ class tx_ttnewscacheClearLike {
 			}
 			if ($this->debug) t3lib_div::devLog('[CL] Cache clearing in '. $typeOfView .'. Rows affected: '.$rowsAffected, $this->extKey);
 		}
-		$endTime = $thisRef->TT->mtime();
-		if ($this->debug) t3lib_div::devLog('[CL] Clearlike /hook/ [END]. Time taken in: '. $endTime .' - '. $startTime . ' = ' . ($endTime - $startTime) .'ms', $this->extKey);
+		if ($this->debug) {
+			$endTime = $thisRef->TT->mtime();
+			t3lib_div::devLog('[CL] Clearlike /hook/ [END]. Time taken in: '. $endTime .' - '. $startTime . ' = ' . ($endTime - $startTime) .'ms', $this->extKey);
+		}
 	}
 
 	/**
