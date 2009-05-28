@@ -91,7 +91,7 @@ class tx_ttnewscacheClearLike {
 							$where = "HTML LIKE '%tt-news-single-uid-". $GLOBALS['TYPO3_DB']->escapeStrForLike($uid,'cache_pages') ."-record-". intval($clearUid) ." %'";
 
 							$noPidSet = 0;
-							if( isset($view['pid']) && intval($view['pid']) > 0) {
+							if( isset($view['pid']) && (intval($view['pid']) > 0 || intval($view['pid']) == -1)) {
 								$where .= ' AND page_id = '. $view['pid'];
 							}else {
 								if ($this->debug) t3lib_div::devLog('[CL] Attention '. $typeOfView .' with uid '. $uid.' has no pid set. Searches for marker will be processed in all cache_pages records. This can be time consuming. Set the pid if possible.', $this->extKey,3);
@@ -140,7 +140,7 @@ class tx_ttnewscacheClearLike {
 							}
 
 							$noPidSet = 0;
-							if( isset($view['pid']) && intval($view['pid']) > 0) {
+							if( isset($view['pid']) && (intval($view['pid']) > 0 || intval($view['pid']) == -1)) {
 								$where .= ' AND page_id = '. $view['pid'];
 							}else {
 								if ($this->debug) t3lib_div::devLog('[CL] Attention '. $typeOfView .' with uid '. $uid.' has no pid set. Searches for marker will be processed in all cache_pages records. This can be time consuming. Set the pid if possible.', $this->extKey,3);
